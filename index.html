@@ -1,0 +1,292 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Algebraic Calculator</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+    <style>
+        .calculator-btn {
+            transition: all 0.2s ease;
+        }
+        .calculator-btn:hover {
+            transform: scale(0.95);
+        }
+    </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+    <div class="max-w-md w-full bg-white rounded-2xl shadow-2xl overflow-hidden">
+        <!-- Header -->
+        <div class="bg-blue-600 text-white p-6">
+            <h1 class="text-2xl font-bold">Algebraic Calculator</h1>
+            <p class="text-blue-100 mt-1">Solve equations with variables like x, y</p>
+        </div>
+        
+        <!-- Display Area -->
+        <div class="p-6">
+            <div class="bg-gray-50 rounded-lg p-4 mb-4">
+                <div id="display" class="text-2xl font-mono text-right min-h-12 break-all">0</div>
+                <div id="solution" class="text-sm text-gray-600 mt-2 min-h-20"></div>
+            </div>
+            
+            <!-- Input Section -->
+            <div class="mb-4">
+                <input type="text" id="equationInput" 
+                       placeholder="Enter equation (e.g., 3x/4=12x/4)" 
+                       class="w-full p-3 border border-gray-300 rounded-lg focus:outline-none focus:ring-2 focus:ring-blue-500">
+            </div>
+            
+            <!-- Calculator Buttons -->
+            <div class="grid grid-cols-4 gap-3 mb-4">
+                <!-- First Row -->
+                <button onclick="clearDisplay()" class="calculator-btn bg-red-500 text-white p-4 rounded-lg font-bold">C</button>
+                <button onclick="backspace()" class="calculator-btn bg-gray-300 p-4 rounded-lg font-bold">⌫</button>
+                <button onclick="appendToDisplay('(')" class="calculator-btn bg-gray-300 p-4 rounded-lg font-bold">(</button>
+                <button onclick="appendToDisplay(')')" class="calculator-btn bg-gray-300 p-4 rounded-lg font-bold">)</button>
+                
+                <!-- Number Row 1 -->
+                <button onclick="appendToDisplay('7')" class="calculator-btn bg-gray-200 p-4 rounded-lg font-bold">7</button>
+                <button onclick="appendToDisplay('8')" class="calculator-btn bg-gray-200 p-4 rounded-lg font-bold">8</button>
+                <button onclick="appendToDisplay('9')" class="calculator-btn bg-gray-200 p-4 rounded-lg font-bold">9</button>
+                <button onclick="appendToDisplay('/')" class="calculator-btn bg-blue-500 text-white p-4 rounded-lg font-bold">÷</button>
+                
+                <!-- Number Row 2 -->
+                <button onclick="appendToDisplay('4')" class="calculator-btn bg-gray-200 p-4 rounded-lg font-bold">4</button>
+                <button onclick="appendToDisplay('5')" class="calculator-btn bg-gray-200 p-4 rounded-lg font-bold">5</button>
+                <button onclick="appendToDisplay('6')" class="calculator-btn bg-gray-200 p-4 rounded-lg font-bold">6</button>
+                <button onclick="appendToDisplay('*')" class="calculator-btn bg-blue-500 text-white p-4 rounded-lg font-bold">×</button>
+                
+                <!-- Number Row 3 -->
+                <button onclick="appendToDisplay('1')" class="calculator-btn bg-gray-200 p-4 rounded-lg font-bold">1</button>
+                <button onclick="appendToDisplay('2')" class="calculator-btn bg-gray-200 p-4 rounded-lg font-bold">2</button>
+                <button onclick="appendToDisplay('3')" class="calculator-btn bg-gray-200 p-4 rounded-lg font-bold">3</button>
+                <button onclick="appendToDisplay('-')" class="calculator-btn bg-blue-500 text-white p-4 rounded-lg font-bold">−</button>
+                
+                <!-- Number Row 4 -->
+                <button onclick="appendToDisplay('0')" class="calculator-btn bg-gray-200 p-4 rounded-lg font-bold">0</button>
+                <button onclick="appendToDisplay('.')" class="calculator-btn bg-gray-200 p-4 rounded-lg font-bold">.</button>
+                <button onclick="calculate()" class="calculator-btn bg-green-500 text-white p-4 rounded-lg font-bold col-span-2">=</button>
+                
+                <!-- Variable Row -->
+                <button onclick="appendToDisplay('x')" class="calculator-btn bg-purple-500 text-white p-4 rounded-lg font-bold">x</button>
+                <button onclick="appendToDisplay('y')" class="calculator-btn bg-purple-500 text-white p-4 rounded-lg font-bold">y</button>
+                <button onclick="appendToDisplay('z')" class="calculator-btn bg-purple-500 text-white p-4 rounded-lg font-bold">z</button>
+                <button onclick="appendToDisplay('+')" class="calculator-btn bg-blue-500 text-white p-4 rounded-lg font-bold">+</button>
+            </div>
+            
+            <!-- Solve Equation Button -->
+            <button onclick="solveEquation()" class="w-full bg-blue-600 text-white p-4 rounded-lg font-bold hover:bg-blue-700 transition-colors">
+                Solve Algebraic Equation
+            </button>
+        </div>
+    </div>
+
+    <script>
+        let display = document.getElementById('display');
+        let solution = document.getElementById('solution');
+        let equationInput = document.getElementById('equationInput');
+        
+        function appendToDisplay(value) {
+            if (display.innerText === '0' && value !== '.') {
+                display.innerText = value;
+            } else {
+                display.innerText += value;
+            }
+        }
+        
+        function clearDisplay() {
+            display.innerText = '0';
+            solution.innerText = '';
+            equationInput.value = '';
+        }
+        
+        function backspace() {
+            if (display.innerText.length > 1) {
+                display.innerText = display.innerText.slice(0, -1);
+            } else {
+                display.innerText = '0';
+            }
+        }
+        
+        function calculate() {
+            try {
+                let expression = display.innerText;
+                // Replace variables with 1 for basic calculation
+                let evalExpression = expression.replace(/[a-zA-Z]/g, '1');
+                let result = eval(evalExpression);
+                display.innerText = result;
+                solution.innerText = `Calculation: ${expression} = ${result}`;
+            } catch (error) {
+                display.innerText = 'Error';
+                solution.innerText = 'Invalid expression';
+            }
+        }
+        
+        function solveEquation() {
+            let equation = equationInput.value.trim();
+            if (!equation) {
+                equation = display.innerText;
+            }
+            
+            if (!equation.includes('=')) {
+                solution.innerText = 'Please enter an equation with "=" sign';
+                return;
+            }
+            
+            try {
+                let [leftSide, rightSide] = equation.split('=').map(side => side.trim());
+                let solutionSteps = [];
+                solutionSteps.push(`Original equation: ${leftSide} = ${rightSide}`);
+                
+                // Move all terms to left side
+                let simplified = `${leftSide} - (${rightSide})`;
+                solutionSteps.push(`Move all terms to left: ${simplified} = 0`);
+                
+                // Check for variables
+                let variables = new Set();
+                let hasX = equation.includes('x');
+                let hasY = equation.includes('y');
+                let hasZ = equation.includes('z');
+                
+                if (hasX) variables.add('x');
+                if (hasY) variables.add('y');
+                if (hasZ) variables.add('z');
+                
+                if (variables.size === 1) {
+                    // Single variable equation
+                    let variable = Array.from(variables)[0];
+                    
+                    // Simple linear equation solving
+                    if (equation.includes(`${variable}/`) || equation.includes(`/${variable}`)) {
+                        // Handle fractions
+                        let result = solveFractionalEquation(equation, variable);
+                        solutionSteps.push(...result.steps);
+                        solutionSteps.push(`Solution: ${variable} = ${result.value}`);
+                        solution.innerText = solutionSteps.join('\n');
+                    } else {
+                        // Simple coefficient extraction
+                        let coeffLeft = extractCoefficient(leftSide, variable);
+                        let coeffRight = extractCoefficient(rightSide, variable);
+                        let constantLeft = extractConstant(leftSide, variable);
+                        let constantRight = extractConstant(rightSide, variable);
+                        
+                        let a = coeffLeft - coeffRight;
+                        let b = constantRight - constantLeft;
+                        
+                        if (a !== 0) {
+                            let xValue = b / a;
+                            solutionSteps.push(`Coefficient of ${variable}: ${a}`);
+                            solutionSteps.push(`Constant term: ${b}`);
+                            solutionSteps.push(`Divide both sides by ${a}: ${variable} = ${b} / ${a}`);
+                            solutionSteps.push(`Solution: ${variable} = ${xValue}`);
+                        } else {
+                            solutionSteps.push('No solution or infinite solutions');
+                        }
+                        solution.innerText = solutionSteps.join('\n');
+                    }
+                } else if (variables.size > 1) {
+                    solutionSteps.push(`Multiple variables detected: ${Array.from(variables).join(', ')}`);
+                    solutionSteps.push('This calculator can solve for one variable at a time.');
+                    solutionSteps.push('Please isolate one variable in your equation.');
+                    solution.innerText = solutionSteps.join('\n');
+                } else {
+                    solutionSteps.push('No variables found in equation');
+                    solution.innerText = solutionSteps.join('\n');
+                }
+                
+            } catch (error) {
+                solution.innerText = 'Error solving equation. Please check your input.';
+            }
+        }
+        
+        function extractCoefficient(expression, variable) {
+            // Simple coefficient extraction
+            let regex = new RegExp(`([+-]?\\d*)\\s*${variable}`, 'g');
+            let matches = expression.match(regex);
+            let total = 0;
+            
+            if (matches) {
+                matches.forEach(match => {
+                    let coeff = match.replace(variable, '').trim();
+                    if (coeff === '' || coeff === '+') coeff = '1';
+                    if (coeff === '-') coeff = '-1';
+                    total += parseFloat(coeff) || 0;
+                });
+            }
+            
+            return total;
+        }
+        
+        function extractConstant(expression, variable) {
+            // Remove variable terms and evaluate constants
+            let constantExpr = expression.replace(new RegExp(`[+-]?\\d*\\s*${variable}`, 'g'), '');
+            constantExpr = constantExpr.replace(/[+-]$/, '');
+            
+            if (!constantExpr || constantExpr.trim() === '') return 0;
+            
+            try {
+                return eval(constantExpr) || 0;
+            } catch {
+                return 0;
+            }
+        }
+        
+        function solveFractionalEquation(equation, variable) {
+            let [left, right] = equation.split('=');
+            let steps = [];
+            
+            // Handle common fractional patterns
+            if (left.includes(`${variable}/`) && right.includes(`${variable}/`)) {
+                // Example: 3x/4 = 12x/4
+                let leftParts = left.split('/');
+                let rightParts = right.split('/');
+                
+                if (leftParts.length === 2 && rightParts.length === 2) {
+                    let leftCoeff = parseFloat(leftParts[0].replace(variable, '').trim()) || 1;
+                    let leftDenom = parseFloat(leftParts[1]);
+                    let rightCoeff = parseFloat(rightParts[0].replace(variable, '').trim()) || 1;
+                    let rightDenom = parseFloat(rightParts[1]);
+                    
+                    steps.push(`Cross multiply: ${leftCoeff} × ${rightDenom} = ${rightCoeff} × ${leftDenom}`);
+                    
+                    if (leftCoeff * rightDenom === rightCoeff * leftDenom) {
+                        return { value: 'Any real number (infinite solutions)', steps };
+                    } else {
+                        return { value: 0, steps: [...steps, 'Equation simplifies to 0 = 0'] };
+                    }
+                }
+            }
+            
+            // General fractional equation solving
+            steps.push('Multiply both sides by denominators to eliminate fractions');
+            steps.push('This equation requires manual solving');
+            return { value: 'Manual solution required', steps };
+        }
+        
+        // Keyboard support
+        document.addEventListener('keydown', function(event) {
+            if (event.key >= '0' && event.key <= '9' || 
+                event.key === '+' || event.key === '-' || 
+                event.key === '*' || event.key === '/' || 
+                event.key === '.' || event.key === '(' || 
+                event.key === ')' || event.key.toLowerCase() === 'x' || 
+                event.key.toLowerCase() === 'y' || event.key.toLowerCase() === 'z') {
+                appendToDisplay(event.key);
+            } else if (event.key === 'Enter') {
+                calculate();
+            } else if (event.key === 'Escape') {
+                clearDisplay();
+            } else if (event.key === 'Backspace') {
+                backspace();
+            }
+        });
+        
+        equationInput.addEventListener('keydown', function(event) {
+            if (event.key === 'Enter') {
+                solveEquation();
+            }
+        });
+    </script>
+</body>
+<footer style="text-align:center; padding:15px; color:gray; font-size:14px;">Made by Mohammed Anwar</footer>
+</html>
